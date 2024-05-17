@@ -5,7 +5,6 @@ const createInlineKeyboard = (buttons) => {
 };
 
 const mainMenuButtons = [
-    { text: 'Create Wallet', callback_data: 'create_wallet' },
     { text: 'Receive Token', callback_data: 'receive_token' },
     { text: 'Send Token', callback_data: 'send_token' },
     { text: 'Check Balances', callback_data: 'check_balances' },
@@ -15,7 +14,14 @@ const mainMenuButtons = [
 
 const createMainMenu = () => createInlineKeyboard(mainMenuButtons);
 
+const createYesNoButtons = (text, yesCallback, noCallback) => {
+    return Markup.inlineKeyboard([
+        [Markup.button.callback('Yes', yesCallback), Markup.button.callback('No', noCallback)]
+    ]);
+};
+
 module.exports = {
     createInlineKeyboard,
     createMainMenu,
+    createYesNoButtons,
 };
