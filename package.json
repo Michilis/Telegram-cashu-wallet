@@ -1,0 +1,28 @@
+{
+  "name": "telegram-cashu-wallet",
+  "version": "1.0.0",
+  "description": "A Telegram bot for managing Cashu wallets, sending and receiving tokens, and handling Lightning invoices.",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Michilis/Telegram-cashu-wallet.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "cashu",
+    "wallet",
+    "lightning",
+    "invoice"
+  ],
+  "author": "Michilis",
+  "license": "MIT",
+  "dependencies": {
+    "@cashu/cashu-ts": "^1.0.0",  // Specify the actual version you need
+    "dotenv": "^10.0.0",
+    "telegraf": "^4.0.0"
+  }
+}
