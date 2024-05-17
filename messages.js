@@ -1,7 +1,7 @@
 const { Markup } = require('telegraf');
+const { createMainMenu, createYesNoButtons } = require('./modules/helpers');
 const { createWallet, receiveToken, sendToken, payLnInvoice, checkBalances, saveUsers, loadUsers } = require('./modules/wallet');
 const { checkCashuFunds } = require('./modules/cashuChecker');
-const { createYesNoButtons } = require('./modules/helpers');
 
 const handleStart = async (ctx) => {
     const users = loadUsers();
@@ -10,22 +10,9 @@ const handleStart = async (ctx) => {
         const wallet = await createWallet(process.env.DEFAULT_MINT_URL);
         users[userId] = { wallet, mintURL: process.env.DEFAULT_MINT_URL };
         saveUsers(users);
-        ctx.reply('Welcome! Your wallet has been created.');
+        ctx.reply('Welcome! Your wallet has been created.', createMainMenu());
     } else {
-        ctx.reply('Welcome back!');
-    }
-};
-
-const handleCreateWallet = async (ctx) => {
-    const users = loadUsers();
-    const userId = ctx.from.id.toString();
-    if (!users[userId]) {
-        const wallet = await createWallet(process.env.DEFAULT_MINT_URL);
-        users[userId] = { wallet, mintURL: process.env.DEFAULT_MINT_URL };
-        saveUsers(users);
-        ctx.reply('Wallet created successfully!');
-    } else {
-        ctx.reply('You already have a wallet.');
+        ctx.reply('Welcome back!', createMainMenu());
     }
 };
 
@@ -34,7 +21,7 @@ const handleReceiveToken = async (ctx) => {
     const userId = ctx.from.id.toString();
     const user = users[userId];
     if (!user) {
-        return ctx.reply('Please create a wallet first using /create_wallet.');
+        return ctx.reply('Please create a wallet first by sending /start.');
     }
     const encodedToken = ctx.message.text.split(' ')[1];
     if (!encodedToken) {
@@ -55,7 +42,7 @@ const handleSendToken = async (ctx) => {
     const userId = ctx.from.id.toString();
     const user = users[userId];
     if (!user) {
-        return ctx.reply('Please create a wallet first using /create_wallet.');
+        return ctx.reply('Please create a wallet first by sending /start.');
     }
     const [command, amount, ...tokens] = ctx.message.text.split(' ');
     if (!amount || tokens.length === 0) {
@@ -76,7 +63,7 @@ const handleCheckBalances = async (ctx) => {
     const userId = ctx.from.id.toString();
     const user = users[userId];
     if (!user) {
-        return ctx.reply('Please create a wallet first using /create_wallet.');
+        return ctx.reply('Please create a wallet first by sending /start.');
     }
     try {
         const balance = await checkBalances(user.wallet);
@@ -92,7 +79,7 @@ const handlePayLnInvoice = async (ctx) => {
     const userId = ctx.from.id.toString();
     const user = users[userId];
     if (!user) {
-        return ctx.reply('Please create a wallet first using /create_wallet.');
+        return ctx.reply('Please create a wallet first by sending /start.');
     }
     const invoice = ctx.message.text.split(' ')[1];
     if (!invoice) {
@@ -124,19 +111,17 @@ const handleHelp = (ctx) => {
     const helpMessage = `
 *Available Commands:*
 /start - Start the bot and create a wallet
-/create_wallet - Create a new wallet
 /receive_token <encoded_token> - Receive a Cashu token
 /send_token <amount> <tokens> - Send a Cashu token
 /check_balances - Check the balance of your wallet
 /pay_ln_invoice <invoice> - Pay a Lightning invoice
 /help - Display this help message
 `;
-    ctx.replyWithMarkdown(helpMessage);
+    ctx.replyWithMarkdown(helpMessage, createMainMenu());
 };
 
 module.exports = {
     handleStart,
-    handleCreateWallet,
     handleReceiveToken,
     handleSendToken,
     handleCheckBalances,
